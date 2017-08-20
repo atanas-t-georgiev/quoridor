@@ -65,6 +65,8 @@ class Board extends Component {
   @volatile var myTurn: PawnColor.Value = null
   var possibleMoves = new ListBuffer[BoardElement]
   
+  var gamePossible = false;
+  
   private var repaintCount: Long = 0;
 
   def invalidateBoard {
@@ -76,7 +78,7 @@ class Board extends Component {
   override def paint(g: Graphics2D) {
 
     repaintCount += 1;
-    println ("Repaint: " + repaintCount);
+    //println ("Repaint: " + repaintCount);
 
     g setRenderingHint (RenderingHints KEY_ANTIALIASING, RenderingHints VALUE_ANTIALIAS_ON)
     g setColor (Board.BG_COLOR)
@@ -407,16 +409,16 @@ class Board extends Component {
         }
 
         if (myTurn != null && !wall.equals(prevWall)) {
+          prevWall(wall)
           walls += wall
-          val possible = isGamePossible
+          gamePossible = isGamePossible
           walls -= wall
-          if (!possible) {
-            wall invalidate
-          } 
           repaint
         }
-
-        prevWall(wall)
+        
+        if (!gamePossible) {
+          wall invalidate
+        }
         
       } else {
         tile invalidate

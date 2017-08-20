@@ -68,7 +68,7 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
       || (color == PawnColor.YELLOW && tile.x == 0)
       || (color == PawnColor.GREEN && tile.x == board.BOARD_SIZE - 1)) {
       connection.sendMessage(new Message(color, WIN_MSG))
-    } else if (temp != null) {
+    } else {
       sendTurnMessage
     }
   }
@@ -78,9 +78,7 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
     board.myTurn = null
     board.wallsLeft = board.wallsLeft - 1
     wallMessage(wall)
-    if (temp != null) {
-      sendTurnMessage
-    }
+    sendTurnMessage
   }
 
   def sendTurnMessage {
