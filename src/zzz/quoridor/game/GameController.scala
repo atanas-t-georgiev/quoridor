@@ -151,6 +151,9 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
 
       case CONNECT_MSG => {
         
+        board.myTurn = null
+        messages reset
+        
         board.walls.clear
         chat clear
 

@@ -49,6 +49,10 @@ class StatusPanel extends GridPanel(2, 2) {
 
   }
 
+  def reset {
+    lines.values.foreach { x => x.nickName.text = ""; x.walls.text = "" }
+  }
+  
   def setNickName(c: PawnColor.Value, nick: String) {
 
     val line = lines get (c) get
