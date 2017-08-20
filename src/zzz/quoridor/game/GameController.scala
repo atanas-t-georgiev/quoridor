@@ -28,13 +28,17 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
 
   val RESET_PARAM = "RESET"
 
+  var disableShutdownHook = false
+  
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run {
-      connection sendMessage (new Message(color, DISCONNECT_MSG))
-      if (board.myTurn != null) {
-        sendTurnMessage
+      if (!disableShutdownHook) {
+        connection sendMessage (new Message(color, DISCONNECT_MSG))
+        if (board.myTurn != null) {
+          sendTurnMessage
+        }
+        connection close
       }
-      connection close
     }
   })
 
@@ -50,7 +54,7 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
 
   val me = new Pawn(color)
   var players = 0
-
+  
   connection.sendMessage(new Message(color, CONNECT_MSG))
 
   def chatListener(msg: String) {
@@ -138,6 +142,7 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
   def errorListener(e: Exception) {
     Dialog.showConfirmation(board,
       "You lost connection with the server", "Client disconnected", Dialog.Options.Default, Dialog.Message.Error, null)
+    disableShutdownHook = true
     sys.exit(0)
   }
 
@@ -284,6 +289,9 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
 
       case WIN_MSG => {
 
+        disableShutdownHook = true
+        connection close
+        
         var n: String = null
 
         if (color == message.color) {
