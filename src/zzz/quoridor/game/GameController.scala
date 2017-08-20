@@ -150,7 +150,7 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
     message.action match {
 
       case CONNECT_MSG => {
-
+        
         board.walls.clear
         chat clear
 
@@ -196,16 +196,16 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
           }
 
         } else {
-          messages.updateWalls(message.color)
           pawn = new Pawn(message.color)
           board.pawns += (pawn.color -> pawn)
           players = players + 1
           println("Players: " + players)
           if (players > 2) {
             board.wallsLeft = 5
-            board.pawns.keys.foreach { x => messages.setWalls(x, 5) }
-            messages.updateWalls(message.color)
+          } else {
+            board.wallsLeft = 10
           }
+          board.pawns.keys.foreach { x => messages.setWalls(x, board.wallsLeft) }
         }
 
         pawn.x = message.x
@@ -254,7 +254,6 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
           chat #= n + " placed a " + o + " wall on " + (x + 1) + "x" + (y + 1)
 
           messages.decreaseWalls(message.color)
-          messages.updateWalls(message.color)
           board.walls += newWall
           board repaint
         }
@@ -309,6 +308,8 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
 
       case DISCONNECT_MSG => {
 
+        players = players - 1
+        
         if (message.color != me.color) {
           board.pawns.remove(message.color)
           messages setQuit (message.color)
@@ -325,12 +326,6 @@ class GameController(val color: PawnColor.Value, val nickName: String, val board
         val msg = names.getOrElse(message.color, message.color) + " left the room"
 
         chat #= msg
-
-        if (board.pawns.size < 2) {
-          Dialog.showConfirmation(board, msg,
-            "Player quit", Dialog.Options.Default, Dialog.Message.Info, null)
-          sys.exit(0)
-        }
 
       }
 

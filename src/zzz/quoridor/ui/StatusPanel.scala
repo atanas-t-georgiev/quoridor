@@ -62,7 +62,9 @@ class StatusPanel extends GridPanel(2, 2) {
     val line = lines get (c) get
 
     line.wallsLeft = walls
+    
     updateWalls(c)
+    
   }
 
   def setQuit(c: PawnColor.Value) {
@@ -79,6 +81,8 @@ class StatusPanel extends GridPanel(2, 2) {
 
     line.wallsLeft = line.wallsLeft - 1
 
+    updateWalls(c)
+    
   }
 
   def updateWalls(c: PawnColor.Value) {
